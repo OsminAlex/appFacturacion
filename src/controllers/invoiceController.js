@@ -1,5 +1,6 @@
 const Invoices = require("../models/Invoice.js");
 const InvoiceDetails = require("../models/InvoiceDetail.js");
+const Products = require("../models/Product.js");
 
 const postInvoice = async (req, res) => {
   const newInvoice = req.body;
@@ -8,7 +9,7 @@ const postInvoice = async (req, res) => {
     client: newInvoice.client,
   };
 
-  const InvoiceDetails = newInvoice.detail;
+  const InvoiceDetails = newInvoice.details;
 
   console.log(invoice);
 
@@ -21,6 +22,12 @@ const postInvoice = async (req, res) => {
 
     InvoiceDetails.forEach(async (detail) => {
       detail.invoiceNumber = createdInvoice.invoiceNumber;
+
+      const product = await Products.findByPk(detail.productId);
+
+      if (product != null) {
+        const createdDetail = await InvoiceDetails.create(detail);
+      }
 
       const createdDetail = await InvoiceDetails.create(detail);
     });
